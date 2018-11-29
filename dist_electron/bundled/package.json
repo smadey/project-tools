@@ -1,6 +1,11 @@
 {
   "name": "project-tools",
   "version": "0.1.0",
+  "changelog": [
+    "项目管理",
+    "项目的命令管理",
+    "命令的快捷执行"
+  ],
   "private": true,
   "description": "The project tools",
   "author": "Smadey<smadey@163.com>",
