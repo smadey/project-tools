@@ -2,7 +2,9 @@ import fs from 'fs'
 import https from 'https'
 import path from 'path'
 
-const baseDir = path.join(__dirname, '../..', process.env.NODE_ENV === 'production' ? 'app' : 'default_app.asar')
+import { remote } from 'electron'
+
+const appPath = remote.app.getAppPath()
 
 export default ({ confirm }) => {
   return Promise.all([
@@ -10,14 +12,14 @@ export default ({ confirm }) => {
     loadRemoteFile('package.json').then(parseJSON),
   ]).then(([localPkg, remotePkg]) => {
     if (compare(localPkg.version, '<', remotePkg.version)) {
-      const files = ['src/index.html']
+      const files = ['package.json', 'background.js', 'index.html']
 
-      const srcDir = baseDir
-      const tmpdir = `${baseDir}_${remotePkg.version}`
+      const srcDir = appPath
+      const tmpdir = `${appPath}_${remotePkg.version}`
 
       return confirm(remotePkg).then(() => {
         return Promise.all(files.map((file) => {
-          return readLocalFile(file).then((content) => {
+          return loadRemoteFile(file).then((content) => {
             if (!fs.existsSync(tmpdir)) {
               fs.mkdirSync(tmpdir)
             }
@@ -35,7 +37,7 @@ export default ({ confirm }) => {
 }
 
 function readLocalFile(file) {
-  const url = path.join(baseDir, file)
+  const url = path.join(appPath, file)
   if (fs.existsSync(url)) {
     return Promise.resolve(fs.readFileSync(url).toString())
   }
@@ -43,7 +45,7 @@ function readLocalFile(file) {
 }
 
 function loadRemoteFile(file) {
-  const url = `https://raw.githubusercontent.com/smadey/project-tools/master/${file}?v=${Math.random()}`
+  const url = `https://raw.githubusercontent.com/smadey/project-tools/master/dist_electron/bundled/${file}?v=${Math.random()}`
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
       const status = res.statusCode
