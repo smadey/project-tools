@@ -2,6 +2,8 @@
 
 import { app, protocol, BrowserWindow } from 'electron'
 import createProtocol from 'vue-cli-plugin-electron-builder/lib/createProtocol'
+import './menu'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -52,6 +54,8 @@ app.on('activate', () => {
 app.on('ready', async () => {
   createWindow()
 })
+
+app.setAsDefaultProtocolClient('proj')
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

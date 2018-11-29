@@ -23,4 +23,11 @@ module.exports = {
           .delete('prefetch')
     }
   },
+  pluginOptions: {
+    electronBuilder: {
+      builderOptions: {
+        asar: false,
+      }
+    }
+  }
 }
